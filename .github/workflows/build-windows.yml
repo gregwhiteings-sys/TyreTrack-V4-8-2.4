@@ -38,8 +38,9 @@ jobs:
         env:
           QT_QPA_PLATFORM: offscreen
         run: |
-          & 'dist/TyreTrack/TyreTrack.exe' --self-test-tracking
-          if ($LASTEXITCODE -ne 0) { throw "Packaged tracker failed with exit code $LASTEXITCODE" }
+          $exe = (Resolve-Path 'dist/TyreTrack/TyreTrack.exe').Path
+          $p = Start-Process -FilePath $exe -ArgumentList '--self-test-tracking' -Wait -PassThru -NoNewWindow
+          if ($p.ExitCode -ne 0) { throw "Packaged tracker failed with exit code $($p.ExitCode)" }
       - name: Test packaged GUI stays open
         shell: pwsh
         env:
